@@ -7,6 +7,7 @@ import { error } from "console";
 const port = process.env.PORT || 5000
 const mongoURI = process.env.MONGO_URI as string
 
+
 const bootstrap = async() =>{
     try{
         await mongoose.connect(mongoURI);
