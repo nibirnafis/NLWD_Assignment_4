@@ -11,7 +11,7 @@
     "build": "tsc",
     "start": "node dist/server.js"
   },
-  "type": "module",
+
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^17.0.1",
