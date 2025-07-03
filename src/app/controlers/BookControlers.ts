@@ -6,7 +6,7 @@ export const bookRoutes = express.Router()
 
 
 // get all books
-bookRoutes.get("/api/books", async (req: Request, res: Response) => {
+bookRoutes.get("/books", async (req: Request, res: Response) => {
 
     try{
         const { filter, sortBy, sort, limit } = req.query
@@ -30,7 +30,7 @@ bookRoutes.get("/api/books", async (req: Request, res: Response) => {
 
 
 // get book
-bookRoutes.get('/api/books/:id', async (req : Request, res : Response) => {
+bookRoutes.get('/books/:id', async (req : Request, res : Response) => {
   const bookId = req.params.id
   const book = await Book.findById(bookId)
   console.log(book)
@@ -53,7 +53,7 @@ bookRoutes.get('/api/books/:id', async (req : Request, res : Response) => {
 
 
 // update book
-bookRoutes.put('/api/books/:id', async (req : Request, res : Response) => {
+bookRoutes.put('/edit-book/:id', async (req : Request, res : Response) => {
   const bookId = req.params.id
   const body = req.body
   const book = await Book.findOneAndUpdate({ _id: bookId }, body, {new: true})
@@ -78,7 +78,7 @@ bookRoutes.put('/api/books/:id', async (req : Request, res : Response) => {
 
 
 // delete book
-bookRoutes.delete('/api/books/:id', async (req : Request, res : Response) => {
+bookRoutes.delete('/delete-book/:id', async (req : Request, res : Response) => {
   const bookId = req.params.id
   const book = await Book.findOneAndDelete({ _id: bookId })
 
