@@ -1,3 +1,5 @@
+import { Model } from "mongoose";
+
 export interface books {
     title: string,
     author: string,
@@ -6,4 +8,9 @@ export interface books {
     description: string,
     copies: number,
     available: boolean
+}
+
+
+export interface booksModel extends Model<books>{
+    deductCopies(id: string, quantity: number): Promise<books | null>
 }

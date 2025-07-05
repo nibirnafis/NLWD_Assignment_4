@@ -1,11 +1,11 @@
 import { model, Schema } from "mongoose";
-import { books } from "./Book.interface";
+import { books, booksModel } from "./Book.interface";
 
 const booksSchema = new Schema<books>(
     {
         title: { type: String, required: true },
         author: { type: String, required: true },
-        genre: { type: String, enum: ["FICTION", "NON_FICTION", "SCIENCE", "HISTORY", "BIOGRAPHY", "FANTASY"] },
+        genre: { type: String },
         isbn: { type: String, unique: true, required: true },
         description: { type: String },
         copies: { type: Number, min: 0, required: true },
@@ -17,4 +17,26 @@ const booksSchema = new Schema<books>(
     }
 )
 
-export const Book = model<books>("Book", booksSchema)
+
+
+booksSchema.statics.deductCopies = async function(id: string, quantity: number): Promise<books | null>{
+    const book = await Book.findById(id)
+    
+    if(book){
+        if(book.copies < quantity){
+            console.log("not enough copies")
+            return book
+        }
+        
+        else{
+            console.log("enough copies", quantity)
+            book.copies = book.copies - quantity
+            const updateBook = await Book.findByIdAndUpdate( id, book, {new: true})
+            return updateBook
+        }   
+    }
+    return book
+
+}
+
+export const Book = model<books, booksModel>("Book", booksSchema)

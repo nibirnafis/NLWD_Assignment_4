@@ -52,6 +52,30 @@ bookRoutes.get('/books/:id', async (req : Request, res : Response) => {
 
 
 
+// create book
+bookRoutes.post('/create-book', async (req : Request, res : Response) => {
+  const body = req.body
+  const book = await Book.insertOne(body)
+  console.log(body)
+
+
+    try{
+        res.status(201).json({
+            success: true,
+            message: "Books retrieved successfully",
+            data: book
+        })
+    }catch{
+        res.status(400).json({
+            success: false,
+            message: "Book Not Found",
+            data: validationError
+        })
+    }
+})
+
+
+
 // update book
 bookRoutes.put('/edit-book/:id', async (req : Request, res : Response) => {
   const bookId = req.params.id
