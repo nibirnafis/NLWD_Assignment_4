@@ -17,12 +17,12 @@ borrowRoutes.post('/borrow/:bookId', async (req : Request, res : Response) => {
         const book = await Book.findById(id)
 
         if(book){
-            if(body.quantity < book.copies){
+            if(body.quantity <= book.copies){
                 console.log("available")
                 const borrowedBookBody = { book: id, ...body }
                 const borrowedBook = await BorrowBook.insertOne(borrowedBookBody)
                 const deductedBook = await Book.deductCopies(id, body.quantity)
-                console.log(borrowedBook, deductedBook)
+                // console.log(borrowedBook, deductedBook)
 
                 res.status(201).json({
                     success: true,
@@ -31,6 +31,11 @@ borrowRoutes.post('/borrow/:bookId', async (req : Request, res : Response) => {
                 })
             }else{
                 console.log("Unavailable")
+                res.status(400).json({
+                    success: false,
+                    message: "Book Not Found",
+                    data: validationError
+                })
             }
         }
     }catch{
@@ -50,18 +55,16 @@ borrowRoutes.get('/borrow-summary', async (req : Request, res : Response) => {
 
     try{
         const borrowSummery = await BorrowBook.aggregate([
-            { $match : { quantity: { $gt: 0} } },
+            { $group : { _id: "$book", totalQuantity: { $sum: 1 } } },
             { $lookup: { 
                 from: "books",
-                localField: "book",
+                localField: "_id",
                 foreignField: "_id",
                 as: "book"
             }},
             { $unwind: "$book" },
-            { $project: { book: { title: "$book.title", isbn: "$book.isbn" },  quantity: 1, dueDate: 1} }
+            { $project: { book: { title: "$book.title", isbn: "$book.isbn" }, totalQuantity: 1, _id: 0 } }
         ])
-
-        console.log(borrowSummery)
 
         res.status(201).json({
             success: true,

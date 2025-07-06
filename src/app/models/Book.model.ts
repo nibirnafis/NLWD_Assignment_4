@@ -31,12 +31,18 @@ booksSchema.statics.deductCopies = async function(id: string, quantity: number):
         else{
             console.log("enough copies", quantity)
             book.copies = book.copies - quantity
-            const updateBook = await Book.findByIdAndUpdate( id, book, {new: true})
-            return updateBook
-        }   
+            console.log( book.copies, book.available )
+            if(book.copies < 1){
+                book.available = false
+                const updateBook = await Book.findByIdAndUpdate( id, book, {new: true})
+                return updateBook
+            }else{
+                const updateBook = await Book.findByIdAndUpdate( id, book, {new: true})
+                return updateBook
+            }
+        }
     }
     return book
-
 }
 
 export const Book = model<books, booksModel>("Book", booksSchema)
